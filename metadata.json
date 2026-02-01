@@ -1,0 +1,8 @@
+{
+  "name": "HexaStream - TV Series Tracker",
+  "description": "A futuristic TV series tracker featuring a 3D hexagon-based episode path, integrated video player, and local persistence for monitoring your viewing progress.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
