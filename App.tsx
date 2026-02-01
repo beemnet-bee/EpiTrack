@@ -8,6 +8,36 @@ import AddSeriesModal from './components/AddSeriesModal';
 
 const STORAGE_KEY = 'hexastream_series_v3';
 
+// Custom HexaStream Logo Component
+const Logo: React.FC = () => (
+  <div className="relative w-9 h-9 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]">
+      <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+      </defs>
+      {/* Outer Hexagon */}
+      <polygon 
+        points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" 
+        fill="none" 
+        stroke="url(#logoGradient)" 
+        strokeWidth="4" 
+        className="animate-[pulse_4s_ease-in-out_infinite]"
+      />
+      {/* Inner Hexagon */}
+      <polygon 
+        points="50,25 75,37.5 75,62.5 50,75 25,62.5 25,37.5" 
+        fill="url(#logoGradient)" 
+        className="opacity-80"
+      />
+      {/* Central Sync Node */}
+      <circle cx="50" cy="50" r="6" fill="white" className="animate-pulse" />
+    </svg>
+  </div>
+);
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
   const [seriesList, setSeriesList] = useState<Series[]>([]);
@@ -53,19 +83,17 @@ const App: React.FC = () => {
       <div className="glow-overlay w-[300px] h-[300px] bg-cyan-900/5 top-1/2 -right-32" />
 
       <header className="sticky top-0 z-[100] border-b border-white/5 bg-[#010409]/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div 
-            className="flex items-center gap-3 cursor-pointer group" 
+            className="flex items-center gap-4 cursor-pointer group" 
             onClick={() => { setView('dashboard'); setSearchQuery(''); }}
           >
-            <div className="w-8 h-8 bg-slate-900 border border-white/10 rounded-lg flex items-center justify-center transform group-hover:border-violet-500/50 transition-all">
-              <Terminal size={16} className="text-violet-500" />
-            </div>
+            <Logo />
             <div className="hidden sm:block">
-              <h1 className="text-xs font-orbitron font-black tracking-widest text-white leading-none">
+              <h1 className="text-sm font-orbitron font-black tracking-[0.2em] text-white leading-none">
                 HEXA<span className="text-violet-500">STREAM</span>
               </h1>
-              <span className="text-[8px] text-slate-600 font-bold uppercase tracking-[0.2em]">Archiver.V3.0</span>
+              <span className="text-[7px] text-slate-600 font-bold uppercase tracking-[0.4em]">NEURAL_INTERFACE.v3</span>
             </div>
           </div>
 
@@ -130,8 +158,8 @@ const App: React.FC = () => {
 
       <footer className="border-t border-white/5 py-8 bg-black mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 opacity-40">
-          <div className="flex items-center gap-2">
-            <Terminal size={12} className="text-violet-500" />
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 opacity-50"><Logo /></div>
             <span className="font-orbitron font-bold text-[9px] tracking-widest">HEXASTREAM // CORE_ENG_42</span>
           </div>
           <div className="flex items-center gap-6 text-[9px] font-bold uppercase tracking-widest">
