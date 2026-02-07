@@ -7,6 +7,7 @@ export interface Episode {
   sourceUrl: string; // URL or Local Path string
   duration: string;
   isCompleted: boolean;
+  thumbnail?: string; // Optional thumbnail for tooltips
 }
 
 export interface Series {

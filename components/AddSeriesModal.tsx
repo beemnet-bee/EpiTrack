@@ -18,9 +18,26 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
   const [episodes, setEpisodes] = useState<Partial<Episode>[]>([]);
   const [dragActive, setDragActive] = useState(false);
 
+  const extractEpisodeNumber = (fileName: string, fallback: number): number => {
+    const nameWithoutExt = fileName.split('.')[0];
+    const keywordMatch = nameWithoutExt.match(/(?:ep|episode|e|seg|segment)\s*(\d+)/i);
+    if (keywordMatch && keywordMatch[1]) {
+      return parseInt(keywordMatch[1], 10);
+    }
+    const allNumbers = nameWithoutExt.match(/\d+/g);
+    if (allNumbers && allNumbers.length > 0) {
+      const filtered = allNumbers.filter(n => !['720', '1080', '2160', '480', '264', '265'].includes(n));
+      if (filtered.length > 0) {
+        return parseInt(filtered[filtered.length - 1], 10);
+      }
+      return parseInt(allNumbers[allNumbers.length - 1], 10);
+    }
+    return fallback;
+  };
+
   const addEpisodeTemplate = () => {
     setEpisodes(prev => {
-      const nextNum = prev.length + 1;
+      const nextNum = prev.length > 0 ? Math.max(...prev.map(e => e.number || 0)) + 1 : 1;
       return [...prev, { 
         id: Math.random().toString(36).substr(2, 9), 
         number: nextNum, 
@@ -28,7 +45,8 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
         sourceUrl: '',
         description: '',
         duration: '24m',
-        isCompleted: false
+        isCompleted: false,
+        thumbnail: coverImage
       }];
     });
   };
@@ -48,32 +66,40 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
     else if (e.type === "dragleave") setDragActive(false);
   }, []);
 
+  const processFiles = (files: File[]) => {
+    setEpisodes(prev => {
+      const currentCount = prev.length;
+      const newEps = files.map((file, idx) => {
+        const extractedNum = extractEpisodeNumber(file.name, currentCount + idx + 1);
+        return {
+          id: Math.random().toString(36).substr(2, 9),
+          number: extractedNum,
+          title: file.name.split('.')[0].replace(/[_\-]/g, ' ').toUpperCase(),
+          sourceUrl: URL.createObjectURL(file),
+          description: `Linked source: ${file.name}`,
+          duration: '24m',
+          isCompleted: false,
+          thumbnail: coverImage
+        };
+      });
+      return [...prev, ...newEps].sort((a, b) => (a.number || 0) - (b.number || 0));
+    });
+  };
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files) as File[];
-      setEpisodes(prev => {
-        const currentCount = prev.length;
-        const newEps = files.map((file, idx) => ({
-          id: Math.random().toString(36).substr(2, 9),
-          number: currentCount + idx + 1,
-          title: file.name.split('.')[0].replace(/[_\-]/g, ' ').toUpperCase(),
-          sourceUrl: URL.createObjectURL(file),
-          description: `SOURCE_LINKED: ${file.name}`,
-          duration: '24m',
-          isCompleted: false
-        }));
-        return [...prev, ...newEps];
-      });
+      processFiles(Array.from(e.dataTransfer.files));
     }
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || episodes.length === 0) return;
+
+    const finalCover = coverImage.trim() || `https://picsum.photos/seed/${title}/400/600`;
 
     const formattedEpisodes = episodes.map(ep => ({
       ...ep,
@@ -83,242 +109,118 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
       description: ep.description || '',
       sourceUrl: ep.sourceUrl || '',
       duration: ep.duration || 'N/A',
-      isCompleted: !!ep.isCompleted
+      isCompleted: !!ep.isCompleted,
+      thumbnail: ep.thumbnail || finalCover
     })) as Episode[];
 
     onAdd({
       id: Math.random().toString(36).substr(2, 9),
       title: title.trim(),
       description: description.trim(),
-      coverImage: coverImage.trim() || `https://picsum.photos/seed/${title}/400/600`,
+      coverImage: finalCover,
       category,
-      episodes: formattedEpisodes,
+      episodes: formattedEpisodes.sort((a, b) => a.number - b.number),
       createdAt: Date.now()
     });
   };
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-reveal font-mono">
-      <div className="bg-[#0d1117] border border-white/5 rounded-lg w-full max-w-5xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Header */}
-        <div className="p-3 border-b border-white/5 flex items-center justify-between bg-black/40">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-slate-900 border border-white/10 rounded flex items-center justify-center text-violet-500">
-              <Terminal size={14} />
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md animate-reveal font-sans">
+      <div className="bg-[#0a0c12] border border-white/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] flex flex-col shadow-3xl overflow-hidden glass-premium">
+        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-violet-500 border border-white/10">
+              <Terminal size={20} />
             </div>
-            <h2 className="text-[10px] font-bold text-white uppercase tracking-widest font-orbitron">INITIALIZE_DATA_NODE_PROTOCOL</h2>
+            <div>
+              <h2 className="text-sm font-black text-white uppercase tracking-[0.2em] font-orbitron leading-none">Initialize Archive Node</h2>
+              <p className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">Protocol Version 4.0.2</p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-slate-600 hover:text-red-500 transition-colors">
-            <X size={16} />
+          <button onClick={onClose} className="p-2.5 text-slate-500 hover:text-white transition-colors bg-white/5 rounded-full">
+            <X size={20} />
           </button>
         </div>
 
-        {/* Content */}
-        <form id="series-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8 scroll-smooth">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Metadata Left */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 opacity-30 border-b border-white/5 pb-1">
-                <Target size={10} className="text-violet-500" />
-                <span className="text-[8px] font-bold uppercase tracking-widest">ARCHIVE_PARAM_CONFIG</span>
+        <form id="series-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-12 scroll-smooth custom-scrollbar">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-8">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <Target size={14} className="text-violet-500" />
+                <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Node Configuration</span>
               </div>
               
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <label className="text-[7px] font-bold text-slate-700 uppercase tracking-widest pl-1">TARGET_IDENTIFIER</label>
-                  <input 
-                    required 
-                    autoFocus
-                    value={title} 
-                    onChange={(e) => setTitle(e.target.value)} 
-                    className="w-full bg-black/60 border border-white/5 rounded px-3 py-1.5 text-[10px] text-white focus:border-violet-500/40 outline-none font-mono" 
-                    placeholder="ENTER_TITLE..." 
-                  />
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Target Identifier</label>
+                  <input required autoFocus value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 outline-none transition-all placeholder:text-slate-800" placeholder="Enter series title..." />
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[7px] font-bold text-slate-700 uppercase tracking-widest pl-1">CLASS_CATEGORY</label>
-                    <select 
-                      value={category} 
-                      onChange={(e) => setCategory(e.target.value)} 
-                      className="w-full bg-black/60 border border-white/5 rounded px-3 py-1.5 text-[10px] text-white appearance-none cursor-pointer outline-none focus:border-violet-500/40"
-                    >
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Classification</label>
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white appearance-none cursor-pointer outline-none focus:border-violet-500/40 transition-all">
                       {['Action', 'Animation', 'Drama', 'Fantasy', 'Sci-Fi', 'Thriller'].map(cat => (
-                        <option key={cat} className="bg-[#0d1117]" value={cat}>{cat}</option>
+                        <option key={cat} className="bg-[#0a0c12]" value={cat}>{cat}</option>
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[7px] font-bold text-slate-700 uppercase tracking-widest pl-1">VISUAL_SOURCE_URI</label>
-                    <input 
-                      value={coverImage} 
-                      onChange={(e) => setCoverImage(e.target.value)} 
-                      className="w-full bg-black/60 border border-white/5 rounded px-3 py-1.5 text-[10px] text-white outline-none focus:border-violet-500/40" 
-                      placeholder="HTTPS://..." 
-                    />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Cover Source (URL)</label>
+                    <input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800" placeholder="https://..." />
                   </div>
                 </div>
-
-                <div className="space-y-1">
-                  <label className="text-[7px] font-bold text-slate-700 uppercase tracking-widest pl-1">SYNOPSIS_BUFFER</label>
-                  <textarea 
-                    rows={3} 
-                    value={description} 
-                    onChange={(e) => setDescription(e.target.value)} 
-                    className="w-full bg-black/60 border border-white/5 rounded px-3 py-1.5 text-[10px] text-white resize-none outline-none focus:border-violet-500/40" 
-                    placeholder="ENTER_DATA_SUMMARY..." 
-                  />
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Synopsis Buffer</label>
+                  <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white resize-none outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800" placeholder="Enter node summary..." />
                 </div>
               </div>
             </div>
 
-            {/* Source Right */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 opacity-30 border-b border-white/5 pb-1">
-                <Upload size={10} className="text-cyan-500" />
-                <span className="text-[8px] font-bold uppercase tracking-widest">SOURCE_STREAM_LINKAGE</span>
+            <div className="space-y-8">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <Upload size={14} className="text-cyan-500" />
+                <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Source Linkage</span>
               </div>
-              
-              <div 
-                onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
-                className={`relative border border-dashed rounded h-32 flex flex-col items-center justify-center text-center gap-2 transition-all ${dragActive ? 'border-cyan-500 bg-cyan-500/5' : 'border-white/5 bg-black/20 hover:border-slate-800'}`}
-              >
-                <Upload size={16} className="text-slate-700" />
-                <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">DROP_NODE_FILES_HERE</span>
-                <p className="text-[7px] text-slate-800">AUTOMATIC_MAPPING_PROTOCOL</p>
-                <input 
-                  type="file" 
-                  multiple 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      const files = Array.from(e.target.files) as File[];
-                      setEpisodes(prev => {
-                        const currentCount = prev.length;
-                        return [...prev, ...files.map((file, idx) => ({ 
-                          id: Math.random().toString(36).substr(2,9), 
-                          number: currentCount + idx + 1, 
-                          title: file.name.split('.')[0].replace(/[_\-]/g, ' ').toUpperCase(), 
-                          sourceUrl: URL.createObjectURL(file), 
-                          duration: '24m', 
-                          description: `LOCAL_FILE: ${file.name}`,
-                          isCompleted: false 
-                        }))];
-                      });
-                    }
-                  }} 
-                />
-              </div>
-
-              <div className="flex items-start gap-2 p-3 bg-cyan-500/5 rounded border border-cyan-500/10">
-                <Info size={12} className="text-cyan-600 mt-0.5 flex-shrink-0" />
-                <p className="text-[7px] text-slate-600 font-bold uppercase tracking-widest leading-tight">
-                  WARNING: SESSION_PERSISTENCE_LIMITATION. <br />
-                  LOCAL_FILES_ARE_MAPPED_TO_BLOB_URIs. <br />
-                  FOR_PERMANENT_PATH_STORAGE_USE_ONLINE_URLs_OR_MANUAL_STRING_PATHS.
-                </p>
+              <div onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} className={`relative border-2 border-dashed rounded-[2rem] h-56 flex flex-col items-center justify-center text-center gap-4 transition-all group ${dragActive ? 'border-cyan-500 bg-cyan-500/5' : 'border-white/5 bg-black/20 hover:border-slate-800 hover:bg-black/30'}`}>
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-slate-600 group-hover:text-cyan-500 group-hover:scale-110 transition-all"><Upload size={24} /></div>
+                <div>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] block mb-1">Drop archive segments here</span>
+                  <p className="text-[10px] text-slate-600 font-mono uppercase tracking-widest">Automatic Parsing Protocol v2</p>
+                </div>
+                <input type="file" multiple className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { if (e.target.files) processFiles(Array.from(e.target.files)); }} />
               </div>
             </div>
           </div>
 
-          {/* Episode Nodes List */}
-          <div className="space-y-4 pt-4 border-t border-white/5">
+          <div className="space-y-8 pt-10 border-t border-white/5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Terminal size={10} className="text-violet-500" />
-                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">NODE_SEQUENCE_STACK [{episodes.length}]</span>
+              <div className="flex items-center gap-4">
+                <div className="w-1.5 h-6 bg-violet-600 rounded-full" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-[0.3em] font-orbitron">Sequence Stack [{episodes.length}]</h3>
               </div>
-              <button 
-                type="button" 
-                onClick={addEpisodeTemplate} 
-                className="px-2 py-1 bg-violet-600/10 border border-violet-500/20 rounded text-[7px] font-bold text-violet-400 hover:bg-violet-600/20 tracking-widest uppercase transition-colors"
-              >
-                + ADD_MANUAL_NODE
+              <button type="button" onClick={addEpisodeTemplate} className="flex items-center gap-3 px-5 py-2.5 glass border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-bold hover:bg-violet-600/10 tracking-widest uppercase transition-all">
+                <Plus size={14} /> Add Manual Node
               </button>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {episodes.map((ep) => (
-                <div key={ep.id} className="p-3 bg-black/40 border border-white/5 rounded space-y-3 relative group hover:border-violet-500/20 transition-all">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <div className="w-6 h-6 bg-slate-900 border border-white/10 rounded flex items-center justify-center text-violet-500 text-[9px] font-black">{ep.number}</div>
-                      <input 
-                        value={ep.title} 
-                        onChange={(e) => updateEpisode(ep.id!, { title: e.target.value.toUpperCase() })} 
-                        className="flex-1 bg-transparent border-none p-0 text-[9px] font-bold text-white focus:ring-0 uppercase tracking-tighter outline-none" 
-                        placeholder="NODE_NAME..."
-                      />
+                <div key={ep.id} className="p-6 glass border border-white/5 rounded-3xl space-y-5 relative group hover:border-violet-500/20 transition-all animate-reveal">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-violet-500 text-sm font-mono font-bold border border-white/10 group-hover:border-violet-500/30 transition-colors">{ep.number}</div>
+                      <input value={ep.title} onChange={(e) => updateEpisode(ep.id!, { title: e.target.value })} className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-white focus:ring-0 uppercase tracking-tight outline-none" placeholder="Segment Title..." />
                     </div>
-                    <button 
-                      type="button" 
-                      onClick={() => removeEpisode(ep.id!)} 
-                      className="text-slate-700 hover:text-red-500 transition-colors p-1"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-2">
-                    <div className="flex gap-2">
-                      <div className="w-1/3">
-                        <select 
-                          value={ep.duration} 
-                          onChange={(e) => updateEpisode(ep.id!, { duration: e.target.value })} 
-                          className="w-full bg-black border border-white/5 rounded px-2 py-1 text-[8px] text-slate-400 outline-none focus:border-violet-500/30"
-                        >
-                          {DURATION_OPTIONS.map(opt => <option key={opt} value={opt} className="bg-[#0d1117]">{opt}</option>)}
-                        </select>
-                      </div>
-                      <div className="w-2/3">
-                        <input 
-                          value={ep.sourceUrl} 
-                          onChange={(e) => updateEpisode(ep.id!, { sourceUrl: e.target.value })} 
-                          className="w-full bg-black border border-white/5 rounded px-2 py-1 text-[8px] text-slate-400 outline-none focus:border-violet-500/30" 
-                          placeholder="STREAM_SOURCE_PATH..." 
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MessageSquareQuote size={10} className="text-slate-800 flex-shrink-0" />
-                      <input 
-                        value={ep.description} 
-                        onChange={(e) => updateEpisode(ep.id!, { description: e.target.value })} 
-                        className="w-full bg-transparent border-b border-white/5 py-0.5 text-[8px] text-slate-600 outline-none focus:border-violet-500/20 italic" 
-                        placeholder="ENTER_SEGMENT_DESCRIPTION..." 
-                      />
-                    </div>
+                    <button type="button" onClick={() => removeEpisode(ep.id!)} className="text-slate-700 hover:text-red-500 transition-all p-2 bg-white/5 hover:bg-red-500/10 rounded-lg"><Trash2 size={16} /></button>
                   </div>
                 </div>
               ))}
             </div>
-            
-            {episodes.length === 0 && (
-              <div className="text-center py-6 border border-dashed border-white/5 rounded opacity-20">
-                <span className="text-[8px] font-bold uppercase tracking-widest">AWAITING_NODE_INPUT</span>
-              </div>
-            )}
           </div>
         </form>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-white/5 bg-black/40 flex justify-end gap-3">
-          <button 
-            type="button"
-            onClick={onClose} 
-            className="px-4 py-2 text-slate-700 text-[9px] font-bold uppercase tracking-widest hover:text-slate-400 transition-colors"
-          >
-            ABORT_INIT
-          </button>
-          <button 
-            type="submit"
-            form="series-form"
-            disabled={!title || episodes.length === 0} 
-            className="px-6 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded text-[9px] font-bold uppercase tracking-widest disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)]"
-          >
-            EXECUTE_DEPLOYMENT
-          </button>
+        <div className="p-8 border-t border-white/10 bg-black/40 flex justify-end gap-6 items-center">
+          <button type="button" onClick={onClose} className="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Abort Protocol</button>
+          <button type="submit" form="series-form" disabled={!title || episodes.length === 0} className="px-10 py-4 bg-violet-600 hover:bg-violet-500 text-white rounded-2xl text-xs font-bold uppercase tracking-widest disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-[0_0_30px_rgba(139,92,246,0.3)] font-orbitron hover:scale-105 active:scale-95">Execute Deployment</button>
         </div>
       </div>
     </div>
