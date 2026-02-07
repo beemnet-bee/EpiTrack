@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { Series } from '../types';
-import { Play, Clock, Layers, Plus, Activity, Database, SearchX, Terminal } from 'lucide-react';
+import { Play, Layers, Plus, SearchX, Terminal, Shield, Activity, Clock } from 'lucide-react';
 
 interface DashboardProps {
   seriesList: Series[];
@@ -16,125 +16,138 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
     if (!query) return seriesList;
     return seriesList.filter(s => 
       s.title.toLowerCase().includes(query) || 
-      s.category.toLowerCase().includes(query) ||
-      s.description.toLowerCase().includes(query)
+      s.category.toLowerCase().includes(query)
     );
   }, [seriesList, searchQuery]);
 
-  const totalEpisodes = seriesList.reduce((acc, s) => acc + s.episodes.length, 0);
-  const completedEpisodes = seriesList.reduce((acc, s) => acc + s.episodes.filter(e => e.isCompleted).length, 0);
-
   return (
-    <div className="space-y-12 animate-reveal">
-      {/* Compact Hero */}
+    <div className="space-y-16">
       {!searchQuery && (
-        <section className="relative h-64 rounded-2xl overflow-hidden border border-white/5 flex items-center p-8 bg-[#010409]">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-indigo-950 to-black opacity-60" />
-          <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border-[40px] border-violet-500/10 rounded-full animate-pulse" />
-          </div>
+        <section className="relative h-96 rounded-[2.5rem] overflow-hidden border border-white/5 flex items-center p-16 bg-[#020617] shadow-3xl group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.15),transparent_60%)] group-hover:opacity-100 transition-opacity duration-1000" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-transparent" />
           
-          <div className="relative z-10 max-w-2xl space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-violet-600/10 border border-violet-500/20 text-violet-500 text-[8px] font-bold uppercase tracking-widest font-mono rounded">SYSTEM.READY</span>
-              <Activity size={10} className="text-cyan-500 animate-pulse" />
+          <div className="relative z-10 max-w-2xl space-y-10">
+            <div className="flex items-center gap-4">
+              <span className="px-4 py-1.5 bg-violet-600/10 border border-violet-500/20 text-violet-500 text-[10px] font-bold uppercase tracking-[0.3em] font-mono rounded-full">System Secure</span>
+              <Shield size={16} className="text-cyan-500 animate-pulse" />
             </div>
             
-            <h2 className="text-3xl font-black font-orbitron text-white tracking-tighter uppercase leading-none">
-              NEURAL_ARCHIVE_<span className="text-violet-500">INIT</span>
-            </h2>
-            
-            <p className="text-slate-500 text-xs font-mono max-w-md leading-relaxed">
-              Managing <span className="text-white">[{seriesList.length}]</span> data-nodes. Core sync efficiency at <span className="text-cyan-500">[{Math.round((completedEpisodes / (totalEpisodes || 1)) * 100)}%]</span>.
-            </p>
+            <div className="space-y-5">
+              <h2 className="text-6xl font-black font-orbitron text-white tracking-tighter uppercase leading-none">
+                Neural <span className="text-violet-500">Archive</span>
+              </h2>
+              <p className="text-slate-400 text-lg font-medium max-w-lg leading-relaxed">
+                Currently tracking <span className="text-white font-bold">{seriesList.length}</span> active archives with synchronized neural progress.
+              </p>
+            </div>
 
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap gap-6 pt-4">
               <button 
                 onClick={onAddRequest}
-                className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded font-bold flex items-center gap-2 transition-all text-[9px] uppercase tracking-widest font-orbitron"
+                className="px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white rounded-2xl font-bold flex items-center gap-4 transition-all text-sm uppercase tracking-widest font-orbitron shadow-2xl active:scale-95"
               >
-                <Plus size={12} /> INITIALIZE_SYNC
+                <Plus size={20} /> Initialize New Node
               </button>
-              <div className="px-4 py-2 bg-white/5 border border-white/5 rounded flex items-center gap-3 cursor-default">
-                <Terminal size={12} className="text-slate-600" />
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">NODES: {completedEpisodes}/{totalEpisodes}</span>
-              </div>
             </div>
+          </div>
+          
+          {/* Hero Decor */}
+          <div className="absolute right-20 top-1/2 -translate-y-1/2 hidden xl:block opacity-20 group-hover:opacity-40 transition-opacity duration-1000">
+             <div className="w-96 h-96 border-2 border-violet-500/30 rounded-full animate-[spin_60s_linear_infinite]" />
+             <div className="absolute inset-0 w-96 h-96 border-2 border-cyan-500/10 rounded-full scale-75 animate-[spin_40s_linear_infinite_reverse]" />
           </div>
         </section>
       )}
 
-      {/* Library Grid */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-3">
-            <div className="w-1 h-4 bg-violet-600 rounded-full" />
-            <h3 className="text-xs font-bold text-white font-orbitron uppercase tracking-widest">
-              {searchQuery ? 'QUERY_RESULTS' : 'ARCHIVE_COLLECTION'}
+      <div className="space-y-10">
+        <div className="flex items-center justify-between border-b border-white/5 pb-8">
+          <div className="flex items-center gap-6">
+            <div className="w-2 h-10 bg-violet-600 rounded-full shadow-[0_0_15px_#8b5cf6]" />
+            <h3 className="text-xl font-bold text-white font-orbitron uppercase tracking-[0.4em]">
+              {searchQuery ? 'Search Results' : 'Node Collection'}
             </h3>
           </div>
-          <div className="text-[9px] font-bold text-slate-700 uppercase tracking-widest font-mono">
-            {filteredList.length} NODES_FOUND
+          <div className="flex items-center gap-4 px-5 py-2 glass rounded-2xl border border-white/10">
+             <Activity size={16} className="text-cyan-500" />
+             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">
+               {filteredList.length} Channels
+             </span>
           </div>
         </div>
 
         {filteredList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 border border-dashed border-white/5 rounded-2xl bg-black/40 text-center">
-            <SearchX size={32} className="text-slate-800 mb-4" />
-            <h3 className="text-xs font-bold text-slate-600 font-mono tracking-widest uppercase mb-2">ARCHIVE_NOT_FOUND</h3>
-            <p className="text-[9px] text-slate-800 font-bold uppercase tracking-widest">Requested node id returned NULL.</p>
+          <div className="flex flex-col items-center justify-center py-48 glass rounded-[3rem] border border-dashed border-white/10 text-center">
+            <SearchX size={64} className="text-slate-800 mb-8" />
+            <h3 className="text-lg font-bold text-slate-500 uppercase tracking-widest mb-4">Archive Empty</h3>
+            <p className="text-sm text-slate-700 font-bold uppercase tracking-widest">No matching node identifiers found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredList.map((series) => {
-              const progress = Math.round((series.episodes.filter(e => e.isCompleted).length / (series.episodes.length || 1)) * 100);
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            {filteredList.map((series, index) => {
+              const watchedCount = series.episodes.filter(e => e.isCompleted).length;
+              const totalCount = series.episodes.length || 1;
+              const progress = Math.round((watchedCount / totalCount) * 100);
+              
+              // Find next episode to watch
+              const nextEpisode = series.episodes.find(e => !e.isCompleted) || series.episodes[0];
+
               return (
                 <div 
                   key={series.id}
                   onClick={() => onSelect(series.id)}
-                  className="group relative bg-[#0d1117] rounded-lg overflow-hidden border border-white/5 hover:border-violet-500/50 transition-all duration-300 cursor-pointer flex flex-col"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                  className="group relative glass rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-violet-500/40 transition-all duration-500 cursor-pointer flex flex-col hover-shine hover:translate-y-[-8px]"
                 >
-                  <div className="relative aspect-[3/4] overflow-hidden">
+                  <div className="relative aspect-[16/11] overflow-hidden">
                     <img 
                       src={series.coverImage} 
                       alt={series.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                      className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 opacity-70 group-hover:opacity-100"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c10] via-[#0a0c10]/40 to-transparent" />
                     
-                    <div className="absolute top-2 left-2">
-                      <span className="px-1.5 py-0.5 bg-black/80 text-cyan-500 text-[7px] font-bold uppercase tracking-widest rounded border border-cyan-500/20">
+                    <div className="absolute top-6 left-6">
+                      <span className="px-4 py-2 glass-premium rounded-xl text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
                         {series.category}
                       </span>
                     </div>
 
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center shadow-lg transform -rotate-12 group-hover:rotate-0 transition-transform">
-                        <Play fill="white" size={14} className="text-white" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div className="w-16 h-16 bg-violet-600 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(139,92,246,0.5)] transform scale-50 group-hover:scale-100 transition-transform">
+                        <Play fill="white" size={24} className="text-white translate-x-1" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 space-y-3">
-                    <div className="space-y-0.5">
-                      <h4 className="text-[10px] font-bold text-white truncate font-orbitron uppercase tracking-tighter">
+                  <div className="p-8 space-y-6 flex-1 flex flex-col justify-between">
+                    <div className="space-y-3">
+                      <h4 className="text-xl font-extrabold text-white truncate leading-tight group-hover:text-violet-400 transition-colors">
                         {series.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-[8px] font-bold text-slate-600 uppercase tracking-widest font-mono">
-                        <Layers size={8} /> {series.episodes.length} NODES
+                      <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                        <Layers size={14} className="text-slate-700" /> {series.episodes.length} Segments
                       </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[7px] font-bold text-slate-700 tracking-widest font-mono">
-                        <span>PROGRESS</span>
-                        <span className="text-slate-500">{progress}%</span>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+                        <span>Sync Level</span>
+                        <span className={progress === 100 ? 'text-cyan-400' : 'text-slate-200'}>{progress}%</span>
                       </div>
-                      <div className="w-full h-0.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-violet-600 transition-all duration-1000"
+                          className={`h-full transition-all duration-[1.5s] ease-out shadow-[0_0_15px_currentColor] ${progress === 100 ? 'bg-cyan-400' : 'bg-violet-600'}`}
                           style={{ width: `${progress}%` }}
                         />
+                      </div>
+                      
+                      {/* Watch Next Badge */}
+                      <div className="pt-2 border-t border-white/5 flex items-center gap-3">
+                        <Clock size={12} className="text-violet-500" />
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          Next: <span className="text-white">{nextEpisode?.title || 'None'}</span>
+                        </span>
                       </div>
                     </div>
                   </div>

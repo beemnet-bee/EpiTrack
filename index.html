@@ -5,78 +5,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HexaStream - Neural Node Archiver</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5' fill='url(%23g)' /%3E%3Ccircle cx='50' cy='50' r='15' fill='white' /%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 5 L95 27.5 L95 72.5 L50 95 L5 72.5 L5 27.5 Z' fill='none' stroke='url(%23g)' stroke-width='4' /%3E%3Cpath d='M50 20 L80 35 L80 65 L50 80 L20 65 L20 35 Z' fill='url(%23g)' opacity='0.8' /%3E%3Ccircle cx='50' cy='50' r='8' fill='white' /%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #8b5cf6;
       --secondary: #06b6d4;
-      --bg: #020617;
+      --bg: #01040a;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
     body {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       background-color: var(--bg);
-      color: #e2e8f0;
+      color: #f1f5f9;
       overflow-x: hidden;
       scroll-behavior: smooth;
-      font-size: 13px;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
     }
-    .font-orbitron {
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 0.15em;
-    }
-    .font-mono {
-      font-family: var(--font-mono);
-    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .font-mono { font-family: var(--font-mono); }
+    .font-sans { font-family: var(--font-sans); }
+    
     .glass {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.4; filter: blur(20px); }
-      50% { opacity: 0.6; filter: blur(30px); }
+    
+    .glass-premium {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
     }
-    .glow-overlay {
-      position: absolute;
-      pointer-events: none;
-      border-radius: 50%;
-      filter: blur(40px);
-      z-index: 0;
-      animation: pulse-glow 10s ease-in-out infinite;
-    }
-    @keyframes scanline {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
-    .scanline::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.02), transparent);
-      animation: scanline 12s linear infinite;
-      pointer-events: none;
-      z-index: 50;
-    }
-    ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 0px;
-    }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-    /* Scene 3D compact */
-    .scene-3d {
-      perspective: 1000px;
-      transform-style: preserve-3d;
+    /* Subtle grain texture overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.02;
+      pointer-events: none;
+      z-index: 9999;
     }
-    .container-3d {
-      transform-style: preserve-3d;
-      transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1);
+
+    .neural-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at -10% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(200%) rotate(45deg); }
+    }
+    .hover-shine {
+      position: relative;
+      overflow: hidden;
+    }
+    .hover-shine::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: linear-gradient(transparent, rgba(255,255,255,0.05), transparent);
+      transform: translateX(-100%) rotate(45deg);
+      transition: none;
+    }
+    .hover-shine:hover::after {
+      animation: shine 1.5s ease-out;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+    @keyframes page-transition {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .page-animate {
+      animation: page-transition 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
   </style>
 <script type="importmap">
@@ -92,6 +111,7 @@
 </script>
 </head>
 <body>
+  <div class="neural-bg"></div>
   <div id="root" class="scanline"></div>
 </body>
 </html>
