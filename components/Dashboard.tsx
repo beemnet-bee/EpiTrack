@@ -23,8 +23,8 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
   return (
     <div className="space-y-16">
       {!searchQuery && (
-        <section className="relative h-auto min-h-[24rem] rounded-[2.5rem] overflow-hidden border border-white/5 light:border-slate-200 flex items-center p-8 sm:p-16 bg-[#020617] light:bg-white shadow-3xl group">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.15),transparent_60%)] light:bg-[radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.05),transparent_60%)] group-hover:opacity-100 transition-opacity duration-1000" />
+        <section className="relative h-auto min-h-[24rem] rounded-[2.5rem] overflow-hidden border border-white/5 light:border-slate-200 flex items-center p-8 sm:p-16 bg-[#020617] light:bg-white shadow-3xl group transition-colors duration-500">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.15),transparent_60%)] light:bg-[radial-gradient(circle_at_70%_20%,rgba(139,92,246,0.06),transparent_60%)] group-hover:opacity-100 transition-opacity duration-1000" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-transparent light:from-slate-50 light:via-slate-50/80 light:to-transparent" />
           
           <div className="relative z-10 max-w-2xl space-y-8 sm:space-y-10">
@@ -35,7 +35,7 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
             
             <div className="space-y-5">
               <h2 className="text-4xl sm:text-6xl font-black font-orbitron text-white light:text-slate-900 tracking-tighter uppercase leading-none">
-                Neural <span className="text-violet-500">Archive</span>
+                Episode <span className="text-violet-500">Archive</span>
               </h2>
               <p className="text-slate-400 light:text-slate-500 text-base sm:text-lg font-medium max-w-lg leading-relaxed">
                 Currently tracking <span className="text-white light:text-violet-600 font-bold">{seriesList.length}</span> active archives with synchronized neural progress.
@@ -52,7 +52,7 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
             </div>
           </div>
           
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 hidden xl:block opacity-20 light:opacity-10 group-hover:opacity-40 light:group-hover:opacity-20 transition-opacity duration-1000">
+          <div className="absolute right-20 top-1/2 -translate-y-1/2 hidden xl:block opacity-20 light:opacity-40 group-hover:opacity-40 light:group-hover:opacity-60 transition-opacity duration-1000">
              <div className="w-96 h-96 border-2 border-violet-500/30 rounded-full animate-[spin_60s_linear_infinite]" />
              <div className="absolute inset-0 w-96 h-96 border-2 border-cyan-500/10 rounded-full scale-75 animate-[spin_40s_linear_infinite_reverse]" />
           </div>
@@ -67,7 +67,7 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
               {searchQuery ? 'Search Results' : 'Node Collection'}
             </h3>
           </div>
-          <div className="flex items-center gap-4 px-5 py-2 glass rounded-2xl border border-white/10">
+          <div className="flex items-center gap-4 px-5 py-2 glass rounded-2xl border border-white/10 light:border-slate-200">
              <Activity size={16} className="text-cyan-500" />
              <span className="text-xs font-bold text-slate-400 light:text-slate-600 uppercase tracking-widest font-mono">
                {filteredList.length} Channels
@@ -76,10 +76,10 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
         </div>
 
         {filteredList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-48 glass rounded-[3rem] border border-dashed border-white/10 text-center">
-            <SearchX size={64} className="text-slate-800 light:text-slate-300 mb-8" />
+          <div className="flex flex-col items-center justify-center py-48 glass rounded-[3rem] border border-dashed border-white/10 light:border-slate-200 text-center">
+            <SearchX size={64} className="text-slate-800 light:text-slate-200 mb-8" />
             <h3 className="text-lg font-bold text-slate-500 light:text-slate-400 uppercase tracking-widest mb-4">Archive Empty</h3>
-            <p className="text-sm text-slate-700 light:text-slate-400 font-bold uppercase tracking-widest">No matching node identifiers found.</p>
+            <p className="text-sm text-slate-700 light:text-slate-300 font-bold uppercase tracking-widest">No matching node identifiers found.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
@@ -94,18 +94,18 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
                   key={series.id}
                   onClick={() => onSelect(series.id)}
                   style={{ animationDelay: `${index * 0.05}s` }}
-                  className="group relative glass rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-violet-500/40 transition-all duration-500 cursor-pointer flex flex-col hover-shine hover:translate-y-[-8px]"
+                  className="group relative glass rounded-[2.5rem] overflow-hidden border border-white/5 light:border-slate-200 hover:border-violet-500/40 transition-all duration-500 cursor-pointer flex flex-col hover-shine hover:translate-y-[-8px]"
                 >
-                  <div className="relative aspect-[16/11] overflow-hidden bg-slate-900 light:bg-slate-200">
+                  <div className="relative aspect-[16/11] overflow-hidden bg-slate-900 light:bg-slate-100">
                     <img 
                       src={series.coverImage} 
                       alt={series.title}
                       className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 opacity-70 group-hover:opacity-100"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c10] via-[#0a0c10]/40 to-transparent light:from-slate-50/80 light:to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0c10] via-[#0a0c10]/40 to-transparent light:from-white/60 light:to-transparent" />
                     
                     <div className="absolute top-6 left-6">
-                      <span className="px-4 py-2 glass-premium rounded-xl text-[10px] font-bold text-cyan-400 light:text-cyan-600 light:bg-white/80 uppercase tracking-widest">
+                      <span className="px-4 py-2 glass-premium rounded-xl text-[10px] font-bold text-cyan-400 light:text-cyan-600 uppercase tracking-widest">
                         {series.category}
                       </span>
                     </div>
@@ -132,7 +132,7 @@ const Dashboard: React.FC<DashboardProps> = ({ seriesList, searchQuery = '', onS
                         <span>Sync Level</span>
                         <span className={progress === 100 ? 'text-cyan-400 light:text-cyan-600' : 'text-slate-200 light:text-slate-700'}>{progress}%</span>
                       </div>
-                      <div className="w-full h-2 bg-slate-900 light:bg-slate-200 rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-slate-900 light:bg-slate-100 rounded-full overflow-hidden">
                         <div 
                           className={`h-full transition-all duration-[1.5s] ease-out shadow-[0_0_15px_currentColor] ${progress === 100 ? 'bg-cyan-400' : 'bg-violet-600'}`}
                           style={{ width: `${progress}%` }}
