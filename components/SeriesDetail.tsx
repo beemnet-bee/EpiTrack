@@ -36,6 +36,7 @@ const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onUpdate }) => {
       ep.id === episodeId ? { ...ep, isCompleted: !ep.isCompleted } : ep
     );
     
+    // If the changed episode is the one we just marked complete, track it
     const updatedLastWatchedId = updatedEpisodes.find(e => e.id === episodeId)?.isCompleted 
       ? episodeId 
       : series.lastWatchedEpisodeId;
@@ -65,7 +66,7 @@ const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onUpdate }) => {
 
   return (
     <div className="relative min-h-screen pb-20">
-      {/* Main Content Area - Fixed width, no shifting */}
+      {/* Main Content Area - Stable Layout */}
       <div className="w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-10">
           <div className="lg:col-span-8 space-y-6 xl:space-y-8">
@@ -166,9 +167,9 @@ const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onUpdate }) => {
         </div>
       </div>
 
-      {/* Floating Floating Neural Pathway Modal */}
+      {/* Floating Modal Overlay */}
       <aside 
-        className={`fixed top-20 right-0 bottom-0 z-[120] w-full sm:w-[380px] xl:w-[450px] bg-[#0a0c12]/98 backdrop-blur-3xl border-l border-white/10 shadow-3xl transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-20 right-0 bottom-0 z-[120] w-full sm:w-[380px] xl:w-[450px] bg-[#0a0c12]/98 backdrop-blur-3xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="p-6 xl:p-8 border-b border-white/10 flex items-center justify-between bg-black/40">
           <div className="flex items-center gap-4">
@@ -217,7 +218,7 @@ const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onUpdate }) => {
         </div>
       </aside>
 
-      {/* Persistent Backdrop for visibility */}
+      {/* Persistent Backdrop for visibility and click-to-close */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[110] animate-reveal"

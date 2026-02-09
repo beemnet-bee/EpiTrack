@@ -125,27 +125,27 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md animate-reveal font-sans">
-      <div className="bg-[#0a0c12] border border-white/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] flex flex-col shadow-3xl overflow-hidden glass-premium">
-        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 dark:bg-black/95 light:bg-slate-900/40 backdrop-blur-md animate-reveal font-sans">
+      <div className="bg-[#0a0c12] light:bg-white border border-white/10 light:border-slate-200 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] flex flex-col shadow-3xl overflow-hidden glass-premium">
+        <div className="p-6 border-b border-white/5 light:border-slate-200 flex items-center justify-between bg-white/[0.02] light:bg-slate-50">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-violet-500 border border-white/10">
+            <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-violet-500 border border-white/10 light:border-slate-200">
               <Terminal size={20} />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-[0.2em] font-orbitron leading-none">Initialize Archive Node</h2>
+              <h2 className="text-sm font-black text-white light:text-slate-900 uppercase tracking-[0.2em] font-orbitron leading-none">Initialize Archive Node</h2>
               <p className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">Protocol Version 4.0.2</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 text-slate-500 hover:text-white transition-colors bg-white/5 rounded-full">
+          <button onClick={onClose} className="p-2.5 text-slate-500 hover:text-white light:hover:text-slate-900 transition-colors bg-white/5 light:bg-slate-200/50 rounded-full">
             <X size={20} />
           </button>
         </div>
 
-        <form id="series-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-12 scroll-smooth custom-scrollbar">
+        <form id="series-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 sm:p-10 space-y-12 scroll-smooth custom-scrollbar">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <div className="flex items-center gap-3 border-b border-white/5 light:border-slate-100 pb-4">
                 <Target size={14} className="text-violet-500" />
                 <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Node Configuration</span>
               </div>
@@ -153,38 +153,38 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Target Identifier</label>
-                  <input required autoFocus value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 outline-none transition-all placeholder:text-slate-800" placeholder="Enter series title..." />
+                  <input required autoFocus value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-black/40 light:bg-slate-50 border border-white/5 light:border-slate-200 rounded-2xl px-5 py-4 text-sm text-white light:text-slate-900 focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 outline-none transition-all placeholder:text-slate-800 light:placeholder:text-slate-300" placeholder="Enter series title..." />
                 </div>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Classification</label>
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white appearance-none cursor-pointer outline-none focus:border-violet-500/40 transition-all">
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/40 light:bg-slate-50 border border-white/5 light:border-slate-200 rounded-2xl px-5 py-4 text-sm text-white light:text-slate-900 appearance-none cursor-pointer outline-none focus:border-violet-500/40 transition-all">
                       {['Action', 'Animation', 'Drama', 'Fantasy', 'Sci-Fi', 'Thriller'].map(cat => (
-                        <option key={cat} className="bg-[#0a0c12]" value={cat}>{cat}</option>
+                        <option key={cat} className="bg-[#0a0c12] light:bg-white" value={cat}>{cat}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Cover Source (URL)</label>
-                    <input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800" placeholder="https://..." />
+                    <input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className="w-full bg-black/40 light:bg-slate-50 border border-white/5 light:border-slate-200 rounded-2xl px-5 py-4 text-sm text-white light:text-slate-900 outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800 light:placeholder:text-slate-300" placeholder="https://..." />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Synopsis Buffer</label>
-                  <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm text-white resize-none outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800" placeholder="Enter node summary..." />
+                  <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-black/40 light:bg-slate-50 border border-white/5 light:border-slate-200 rounded-2xl px-5 py-4 text-sm text-white light:text-slate-900 resize-none outline-none focus:border-violet-500/40 transition-all placeholder:text-slate-800 light:placeholder:text-slate-300" placeholder="Enter node summary..." />
                 </div>
               </div>
             </div>
 
             <div className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <div className="flex items-center gap-3 border-b border-white/5 light:border-slate-100 pb-4">
                 <Upload size={14} className="text-cyan-500" />
                 <span className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Source Linkage</span>
               </div>
-              <div onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} className={`relative border-2 border-dashed rounded-[2rem] h-56 flex flex-col items-center justify-center text-center gap-4 transition-all group ${dragActive ? 'border-cyan-500 bg-cyan-500/5' : 'border-white/5 bg-black/20 hover:border-slate-800 hover:bg-black/30'}`}>
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-slate-600 group-hover:text-cyan-500 group-hover:scale-110 transition-all"><Upload size={24} /></div>
+              <div onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} className={`relative border-2 border-dashed rounded-[2rem] h-56 flex flex-col items-center justify-center text-center gap-4 transition-all group ${dragActive ? 'border-cyan-500 bg-cyan-500/5' : 'border-white/5 light:border-slate-200 bg-black/20 light:bg-slate-50 hover:border-slate-800 light:hover:border-violet-500 hover:bg-black/30 light:hover:bg-violet-50/30'}`}>
+                <div className="w-16 h-16 rounded-full bg-white/5 light:bg-slate-100 flex items-center justify-center text-slate-600 light:text-slate-400 group-hover:text-cyan-500 group-hover:scale-110 transition-all"><Upload size={24} /></div>
                 <div>
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] block mb-1">Drop archive segments here</span>
+                  <span className="text-xs font-bold text-slate-400 light:text-slate-500 uppercase tracking-[0.2em] block mb-1">Drop archive segments here</span>
                   <p className="text-[10px] text-slate-600 font-mono uppercase tracking-widest">Automatic Parsing Protocol v2</p>
                 </div>
                 <input type="file" multiple className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { if (e.target.files) processFiles(Array.from(e.target.files)); }} />
@@ -192,25 +192,25 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
             </div>
           </div>
 
-          <div className="space-y-8 pt-10 border-t border-white/5">
+          <div className="space-y-8 pt-10 border-t border-white/5 light:border-slate-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-1.5 h-6 bg-violet-600 rounded-full" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-[0.3em] font-orbitron">Sequence Stack [{episodes.length}]</h3>
+                <h3 className="text-sm font-bold text-white light:text-slate-900 uppercase tracking-[0.3em] font-orbitron">Sequence Stack [{episodes.length}]</h3>
               </div>
-              <button type="button" onClick={addEpisodeTemplate} className="flex items-center gap-3 px-5 py-2.5 glass border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-bold hover:bg-violet-600/10 tracking-widest uppercase transition-all">
+              <button type="button" onClick={addEpisodeTemplate} className="flex items-center gap-3 px-5 py-2.5 glass rounded-xl border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-bold hover:bg-violet-600/10 tracking-widest uppercase transition-all">
                 <Plus size={14} /> Add Manual Node
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {episodes.map((ep) => (
-                <div key={ep.id} className="p-6 glass border border-white/5 rounded-3xl space-y-5 relative group hover:border-violet-500/20 transition-all animate-reveal">
+                <div key={ep.id} className="p-6 glass border border-white/5 light:border-slate-200 rounded-3xl space-y-5 relative group hover:border-violet-500/20 light:hover:border-violet-500/40 transition-all animate-reveal">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1">
                       <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-violet-500 text-sm font-mono font-bold border border-white/10 group-hover:border-violet-500/30 transition-colors">{ep.number}</div>
-                      <input value={ep.title} onChange={(e) => updateEpisode(ep.id!, { title: e.target.value })} className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-white focus:ring-0 uppercase tracking-tight outline-none" placeholder="Segment Title..." />
+                      <input value={ep.title} onChange={(e) => updateEpisode(ep.id!, { title: e.target.value })} className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-white light:text-slate-800 focus:ring-0 uppercase tracking-tight outline-none" placeholder="Segment Title..." />
                     </div>
-                    <button type="button" onClick={() => removeEpisode(ep.id!)} className="text-slate-700 hover:text-red-500 transition-all p-2 bg-white/5 hover:bg-red-500/10 rounded-lg"><Trash2 size={16} /></button>
+                    <button type="button" onClick={() => removeEpisode(ep.id!)} className="text-slate-700 light:text-slate-300 hover:text-red-500 light:hover:text-red-600 transition-all p-2 bg-white/5 light:bg-slate-100 hover:bg-red-500/10 rounded-lg"><Trash2 size={16} /></button>
                   </div>
                 </div>
               ))}
@@ -218,9 +218,9 @@ const AddSeriesModal: React.FC<AddSeriesModalProps> = ({ onClose, onAdd }) => {
           </div>
         </form>
 
-        <div className="p-8 border-t border-white/10 bg-black/40 flex justify-end gap-6 items-center">
-          <button type="button" onClick={onClose} className="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Abort Protocol</button>
-          <button type="submit" form="series-form" disabled={!title || episodes.length === 0} className="px-10 py-4 bg-violet-600 hover:bg-violet-500 text-white rounded-2xl text-xs font-bold uppercase tracking-widest disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-[0_0_30px_rgba(139,92,246,0.3)] font-orbitron hover:scale-105 active:scale-95">Execute Deployment</button>
+        <div className="p-8 border-t border-white/10 light:border-slate-200 bg-black/40 light:bg-slate-50 flex flex-col sm:flex-row justify-end gap-6 items-center">
+          <button type="button" onClick={onClose} className="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-white light:hover:text-slate-900 transition-colors">Abort Protocol</button>
+          <button type="submit" form="series-form" disabled={!title || episodes.length === 0} className="w-full sm:w-auto px-10 py-4 bg-violet-600 hover:bg-violet-500 text-white rounded-2xl text-xs font-bold uppercase tracking-widest disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-[0_0_30px_rgba(139,92,246,0.3)] font-orbitron hover:scale-105 active:scale-95">Execute Deployment</button>
         </div>
       </div>
     </div>
