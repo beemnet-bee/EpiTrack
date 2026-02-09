@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, ChevronLeft, Bell, Search, X, Activity, Cpu, Shield, Zap, Terminal, Trash, Clock, Layers, Sun, Moon } from 'lucide-react';
+import { Plus, ChevronLeft, Bell, Search, X, Activity, Cpu, Shield, Zap, Terminal, Trash, Clock, Layers } from 'lucide-react';
 import { Series, ViewState, Episode } from './types';
 import Dashboard from './components/Dashboard';
 import SeriesDetail from './components/SeriesDetail';
 import AddSeriesModal from './components/AddSeriesModal';
 
 const STORAGE_KEY = 'epitrack_series_v4';
-const THEME_KEY = 'epitrack_theme';
 
 const Logo: React.FC<{ size?: number; className?: string }> = ({ size = 36, className = "" }) => (
   <div 
@@ -52,7 +51,7 @@ const Logo: React.FC<{ size?: number; className?: string }> = ({ size = 36, clas
         />
       </circle>
 
-      <path d="M44,38 L62,50 L44,62 Z" fill="currentColor" className="opacity-90 dark:text-white light:text-slate-800" />
+      <path d="M44,38 L62,50 L44,62 Z" fill="currentColor" className="opacity-90 text-white" />
     </svg>
   </div>
 );
@@ -73,21 +72,21 @@ const NotificationsPanel: React.FC<{
   <>
     {isOpen && <div className="fixed inset-0 z-[1000] bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose} />}
     <aside 
-      className={`fixed top-0 right-0 bottom-0 z-[1100] w-full sm:w-96 bg-[#0a0c12] light:bg-white border-l border-white/10 light:border-slate-200 transition-transform duration-500 shadow-2xl flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      className={`fixed top-0 right-0 bottom-0 z-[1100] w-full sm:w-96 bg-[#0a0c12] border-l border-white/10 transition-transform duration-500 shadow-2xl flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
     >
-      <div className="p-6 border-b border-white/5 light:border-slate-200 flex items-center justify-between bg-white/[0.02] light:bg-slate-50">
+      <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
         <div className="flex items-center gap-3">
           <Activity size={18} className="text-violet-500" />
-          <h2 className="text-xs font-orbitron font-bold text-white light:text-slate-900 uppercase tracking-[0.2em]">Neural Logs</h2>
+          <h2 className="text-xs font-orbitron font-bold text-white uppercase tracking-[0.2em]">Neural Logs</h2>
         </div>
-        <button onClick={onClose} className="p-2 hover:bg-white/5 light:hover:bg-slate-100 rounded-full transition-colors text-slate-400">
+        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
           <X size={20} />
         </button>
       </div>
       
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {logs.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center opacity-20 light:opacity-40">
+          <div className="h-full flex flex-col items-center justify-center text-center opacity-20">
             <Zap size={48} className="mb-4 text-slate-500" />
             <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Awaiting system events...</p>
           </div>
@@ -100,16 +99,16 @@ const NotificationsPanel: React.FC<{
                 </span>
                 <span className="text-[9px] text-slate-500 font-mono">{log.time}</span>
               </div>
-              <p className="text-sm text-slate-300 light:text-slate-700 leading-relaxed font-medium">{log.message}</p>
+              <p className="text-sm text-slate-300 leading-relaxed font-medium">{log.message}</p>
             </div>
           ))
         )}
       </div>
 
-      <div className="p-6 border-t border-white/5 light:border-slate-200 bg-black/20 light:bg-slate-50">
+      <div className="p-6 border-t border-white/5 bg-black/20">
         <button 
           onClick={onClear}
-          className="w-full py-3 bg-white/5 light:bg-white hover:bg-red-500/10 hover:text-red-500 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] rounded-lg transition-all flex items-center justify-center gap-3 border border-transparent hover:border-red-500/20"
+          className="w-full py-3 bg-white/5 hover:bg-red-500/10 hover:text-red-500 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] rounded-lg transition-all flex items-center justify-center gap-3 border border-transparent hover:border-red-500/20"
         >
           <Trash size={14} /> Purge Cache
         </button>
@@ -127,18 +126,8 @@ const App: React.FC = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem(THEME_KEY) as 'dark' | 'light' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-        document.documentElement.classList.add('light');
-      }
-    }
-
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
@@ -152,19 +141,6 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(seriesList));
   }, [seriesList]);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
-    if (newTheme === 'light') {
-      document.body.classList.add('light-mode');
-      document.documentElement.classList.add('light');
-    } else {
-      document.body.classList.remove('light-mode');
-      document.documentElement.classList.remove('light');
-    }
-  };
 
   const addLog = (message: string, type: NotificationItem['type'] = 'info') => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -196,14 +172,14 @@ const App: React.FC = () => {
 
   if (isBooting) {
     return (
-      <div className="fixed inset-0 z-[2000] bg-[#01040a] light:bg-slate-50 flex flex-col items-center justify-center p-6 transition-colors duration-700">
+      <div className="fixed inset-0 z-[2000] bg-[#01040a] flex flex-col items-center justify-center p-6 transition-colors duration-700">
         <Logo size={100} className="mb-12 animate-pulse text-violet-500" />
         <div className="space-y-6 text-center">
-          <h1 className="text-3xl font-orbitron font-black tracking-[0.5em] text-white light:text-slate-900">EPITRACK</h1>
-          <div className="w-64 h-[2px] bg-white/5 light:bg-slate-200 relative overflow-hidden rounded-full">
+          <h1 className="text-3xl font-orbitron font-black tracking-[0.5em] text-white">EPITRACK</h1>
+          <div className="w-64 h-[2px] bg-white/5 relative overflow-hidden rounded-full">
             <div className="absolute inset-y-0 left-0 bg-violet-600 w-full animate-[loading_2s_ease-in-out_forwards]" />
           </div>
-          <p className="text-[10px] font-mono text-cyan-500/60 light:text-cyan-600 font-bold uppercase tracking-[0.4em]">Establishing Uplink...</p>
+          <p className="text-[10px] font-mono text-cyan-500/60 font-bold uppercase tracking-[0.4em]">Establishing Uplink...</p>
         </div>
         <style>{`
           @keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(0%); } }
@@ -214,7 +190,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col selection:bg-violet-500/40">
-      <header className="sticky top-0 z-[100] border-b border-white/5 light:border-slate-200 bg-[#01040a]/80 light:bg-white/80 backdrop-blur-xl transition-colors duration-500">
+      <header className="sticky top-0 z-[100] border-b border-white/5 bg-[#01040a]/80 backdrop-blur-xl transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div 
             className="flex items-center gap-6 cursor-pointer group" 
@@ -222,22 +198,22 @@ const App: React.FC = () => {
           >
             <Logo size={40} className="group-hover:scale-110 transition-transform text-violet-500" />
             <div className="hidden lg:block">
-              <h1 className="text-lg font-orbitron font-black tracking-[0.3em] text-white light:text-slate-900 leading-none">EPITRACK</h1>
-              <span className="text-[9px] text-slate-500 light:text-slate-400 font-bold uppercase tracking-[0.4em] mt-1.5 block">Neural Tracker v4.0</span>
+              <h1 className="text-lg font-orbitron font-black tracking-[0.3em] text-white leading-none">EPITRACK</h1>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-1.5 block">Neural Tracker v4.0</span>
             </div>
           </div>
 
-          <div className="flex-1 max-w-xl mx-12 hidden md:flex items-center glass rounded-2xl px-5 py-3 border border-white/5 light:border-slate-200 focus-within:border-violet-500/40 focus-within:ring-4 focus-within:ring-violet-500/10 transition-all">
+          <div className="flex-1 max-w-xl mx-12 hidden md:flex items-center glass rounded-2xl px-5 py-3 border border-white/5 focus-within:border-violet-500/40 focus-within:ring-4 focus-within:ring-violet-500/10 transition-all">
             <Search size={18} className="text-slate-500" />
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Query Archives..." 
-              className="bg-transparent border-none focus:ring-0 text-sm ml-4 w-full text-slate-100 light:text-slate-800 placeholder:text-slate-700 light:placeholder:text-slate-400 font-medium outline-none" 
+              className="bg-transparent border-none focus:ring-0 text-sm ml-4 w-full text-slate-100 placeholder:text-slate-700 font-medium outline-none" 
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="ml-3 text-slate-500 hover:text-white light:hover:text-slate-900 transition-colors">
+              <button onClick={() => setSearchQuery('')} className="ml-3 text-slate-500 hover:text-white transition-colors">
                 <X size={18} />
               </button>
             )}
@@ -245,18 +221,11 @@ const App: React.FC = () => {
 
           <nav className="flex items-center gap-4 sm:gap-6">
             <button 
-              onClick={toggleTheme}
-              className="p-3 text-slate-400 hover:text-white light:hover:text-slate-900 transition-all glass rounded-xl hover:scale-105 active:scale-95"
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            <button 
               onClick={() => setIsNotificationsOpen(true)}
-              className="p-3 text-slate-400 hover:text-white light:hover:text-slate-900 transition-all relative glass rounded-xl hover:scale-105 active:scale-95"
+              className="p-3 text-slate-400 hover:text-white transition-all relative glass rounded-xl hover:scale-105 active:scale-95"
             >
               <Bell size={20} />
-              <span className="absolute top-3 right-3 w-2 h-2 bg-violet-600 rounded-full border-2 border-[#01040a] light:border-white shadow-[0_0_10px_#8b5cf6]" />
+              <span className="absolute top-3 right-3 w-2 h-2 bg-violet-600 rounded-full border-2 border-[#01040a] shadow-[0_0_10px_#8b5cf6]" />
             </button>
             <button 
               onClick={() => setIsAddModalOpen(true)}
@@ -283,7 +252,7 @@ const App: React.FC = () => {
           <div className="space-y-10">
             <button 
               onClick={() => { setView('dashboard'); addLog('Session Terminated', 'alert'); }}
-              className="flex items-center gap-4 text-slate-500 hover:text-white light:hover:text-slate-900 transition-colors font-bold text-[10px] sm:text-xs uppercase tracking-[0.3em] group"
+              className="flex items-center gap-4 text-slate-500 hover:text-white transition-colors font-bold text-[10px] sm:text-xs uppercase tracking-[0.3em] group"
             >
               <ChevronLeft size={20} className="group-hover:-translate-x-2 transition-transform" />
               <span>Terminate Session</span>
@@ -303,16 +272,16 @@ const App: React.FC = () => {
         onClear={() => setNotifications([])}
       />
 
-      <footer className="border-t border-white/5 light:border-slate-200 py-16 bg-black/40 light:bg-slate-100 mt-24">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10 opacity-40 light:opacity-80">
+      <footer className="border-t border-white/5 py-16 bg-black/40 mt-24">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10 opacity-40">
           <div className="flex items-center gap-6">
             <Logo size={32} className="opacity-50 text-violet-500" />
             <div>
-              <span className="font-orbitron font-bold text-sm tracking-[0.5em] block text-white light:text-slate-900 uppercase">EPITRACK</span>
-              <span className="text-[10px] font-mono block text-slate-500 light:text-slate-400 mt-1">Universal Tracking Core X-9</span>
+              <span className="font-orbitron font-bold text-sm tracking-[0.5em] block text-white uppercase">EPITRACK</span>
+              <span className="text-[10px] font-mono block text-slate-500 mt-1">Universal Tracking Core X-9</span>
             </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-[10px] font-bold uppercase tracking-[0.4em] font-mono text-slate-400 light:text-slate-600">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-[10px] font-bold uppercase tracking-[0.4em] font-mono text-slate-400">
              <span>v4.0.2 Stable</span>
              <span className="text-violet-500">Encryption Active</span>
              <span className="flex items-center gap-2"><Terminal size={14} /> System Optimal</span>

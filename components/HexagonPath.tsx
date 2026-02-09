@@ -80,7 +80,6 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
         onMouseLeave={() => setHoveredId(null)}
         onClick={() => onEpisodeClick(episode)}
       >
-        {/* Navigation Marker - Counter rotated to billboard */}
         {isCurrentFocus && (
           <div 
             className="absolute -top-24 left-1/2 flex flex-col items-center pointer-events-none z-[110]"
@@ -96,7 +95,6 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
           </div>
         )}
 
-        {/* Neural Connector */}
         {index < episodes.length - 1 && (
           <div 
             className="absolute pointer-events-none origin-top transition-all duration-700"
@@ -119,7 +117,6 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
           </div>
         )}
 
-        {/* Node Hexagon with Hover Pulse Animation */}
         <div className={`relative w-[100px] h-[86px] cursor-pointer transition-all duration-500 ${isHovered ? 'scale-110 -translate-y-6' : ''}`} style={{ transformStyle: 'preserve-3d' }}>
           <div className="absolute inset-0 transition-opacity duration-500 blur-2xl translate-z-[-15px]" style={{ opacity: isCompleted ? 0.4 : isCurrentFocus ? 0.7 : 0 }}>
             <svg viewBox="0 0 100 86.6" className="w-full h-full">
@@ -130,27 +127,26 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
             <polygon 
               points="25,0 75,0 100,43.3 75,86.6 25,86.6 0,43.3" 
               className={`transition-all duration-700 ${
-                isCompleted ? 'fill-[#1e1b4b]/95 light:fill-violet-100/90 stroke-violet-500/50' : 
-                isCurrentFocus ? 'fill-slate-900/90 light:fill-cyan-50/90 stroke-cyan-400' : 
-                isNextToWatch ? 'fill-white light:fill-slate-200 stroke-white light:stroke-slate-400' : 
-                'fill-black/90 light:fill-slate-100/90 stroke-white/10 light:stroke-slate-300'
+                isCompleted ? 'fill-[#1e1b4b]/95 stroke-violet-500/50' : 
+                isCurrentFocus ? 'fill-slate-900/90 stroke-cyan-400' : 
+                isNextToWatch ? 'fill-white stroke-white' : 
+                'fill-black/90 stroke-white/10'
               } ${isHovered && !isCompleted ? 'animate-hex-pulse' : ''} ${isNextToWatch ? 'animate-idle-pulse' : ''}`}
               strokeWidth="2.5"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className={`text-sm font-mono font-bold mb-0.5 tracking-tighter ${isNextToWatch ? 'text-black' : isCompleted ? 'text-violet-300 light:text-violet-700' : 'text-slate-600'}`}>
+            <span className={`text-sm font-mono font-bold mb-0.5 tracking-tighter ${isNextToWatch ? 'text-black' : isCompleted ? 'text-violet-300' : 'text-slate-600'}`}>
               {(index + 1).toString().padStart(2, '0')}
             </span>
             <div className="flex items-center justify-center">
-              {isCompleted ? <Check size={16} className="text-violet-400 light:text-violet-600" /> : 
+              {isCompleted ? <Check size={16} className="text-violet-400" /> : 
                isCurrentFocus ? <Activity size={16} className="text-cyan-400 animate-pulse" /> :
-               <Zap size={16} className={isNextToWatch ? 'text-violet-700' : 'text-slate-800 light:text-slate-400'} />}
+               <Zap size={16} className={isNextToWatch ? 'text-violet-700' : 'text-slate-800'} />}
             </div>
           </div>
         </div>
 
-        {/* Tooltip Overlay - Perfect Billboarding and Interactive */}
         <div 
           onClick={(e) => {
             e.stopPropagation();
@@ -159,7 +155,7 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
           className={`
             absolute bottom-full mb-14 left-1/2 w-80 rounded-[2rem] shadow-3xl transition-all duration-500 z-[1200]
             ${isHovered ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto cursor-pointer' : 'opacity-0 scale-90 translate-y-12 pointer-events-none'}
-            bg-[#01040a]/98 light:bg-white/98 backdrop-blur-3xl border border-white/10 light:border-slate-200 overflow-hidden group/tooltip
+            bg-[#01040a]/98 backdrop-blur-3xl border border-white/10 overflow-hidden group/tooltip
           `}
           style={{ 
             transform: `translateX(-50%) rotateZ(12deg) rotateX(-62deg)`, 
@@ -167,21 +163,19 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
             backfaceVisibility: 'hidden',
           }}
         >
-          {/* Episode Prominent Preview with Data Scan Effect */}
           <div className="relative w-full aspect-video overflow-hidden">
             {episode.thumbnail ? (
               <img src={episode.thumbnail} className="w-full h-full object-cover group-hover/tooltip:scale-110 transition-transform duration-[2s]" alt="" />
             ) : (
-              <div className="w-full h-full bg-slate-950 light:bg-slate-100 flex items-center justify-center">
-                <Zap size={32} className="text-slate-900 light:text-slate-300 animate-pulse" />
+              <div className="w-full h-full bg-slate-950 flex items-center justify-center">
+                <Zap size={32} className="text-slate-900 animate-pulse" />
               </div>
             )}
             
-            {/* Scanned Data Overlay Effect */}
             <div className="absolute inset-0 bg-scan-grid opacity-15 pointer-events-none" />
             <div className="absolute top-0 inset-x-0 h-[2px] bg-cyan-400/50 shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-data-scan" />
             
-            <div className="absolute inset-0 bg-gradient-to-t from-[#01040a] light:from-white via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#01040a] via-transparent to-transparent" />
             
             <div className="absolute top-5 left-5">
               <span className="px-3 py-1 bg-black/80 backdrop-blur-md rounded-lg text-[10px] font-bold text-violet-400 uppercase tracking-[0.2em] font-mono border border-white/5 shadow-xl">
@@ -189,9 +183,8 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
               </span>
             </div>
 
-            {/* Completion Status Icon - INTERACTIVE TOGGLE */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/tooltip:opacity-100 transition-all duration-500 bg-black/50 light:bg-slate-900/40 backdrop-blur-[1px]">
-               <div className="px-6 py-3 glass rounded-2xl border border-white/15 light:border-slate-200/50 flex items-center gap-3 text-xs font-black text-white light:text-slate-900 uppercase tracking-[0.2em] shadow-2xl">
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/tooltip:opacity-100 transition-all duration-500 bg-black/50 backdrop-blur-[1px]">
+               <div className="px-6 py-3 glass rounded-2xl border border-white/15 flex items-center gap-3 text-xs font-black text-white uppercase tracking-[0.2em] shadow-2xl">
                  {isCompleted ? <ShieldAlert size={18} className="text-red-500" /> : <ShieldCheck size={18} className="text-cyan-500" />}
                  {isCompleted ? 'DESYNC SEGMENT' : 'SYNC SEGMENT'}
                </div>
@@ -199,30 +192,29 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
           </div>
 
           <div className="p-6 space-y-6">
-            <h4 className="text-base font-black text-white light:text-slate-900 tracking-tight font-sans leading-tight line-clamp-2">
+            <h4 className="text-base font-black text-white tracking-tight font-sans leading-tight line-clamp-2">
               {episode.title}
             </h4>
             
-            {/* Tooltip Completion Progress Bar */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[9px] font-bold text-slate-500 tracking-[0.3em] uppercase font-mono">
                 <span>SYNC_PROGRESS</span>
-                <span className={isCompleted ? 'text-cyan-400' : 'text-slate-700 light:text-slate-400'}>{isCompleted ? '100%' : '0%'}</span>
+                <span className={isCompleted ? 'text-cyan-400' : 'text-slate-700'}>{isCompleted ? '100%' : '0%'}</span>
               </div>
-              <div className="w-full h-1.5 bg-white/5 light:bg-slate-200 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                 <div 
                   className={`h-full bg-gradient-to-r from-violet-600 to-cyan-500 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${isCompleted ? 'w-full shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'w-0'}`}
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-[10px] font-bold tracking-widest pt-5 border-t border-white/5 light:border-slate-100 uppercase">
+            <div className="flex items-center justify-between text-[10px] font-bold tracking-widest pt-5 border-t border-white/5 uppercase">
               <div className="flex items-center gap-2 text-slate-500 font-mono">
-                <Clock size={14} className="text-slate-700 light:text-slate-400" /> {episode.duration || '24m'}
+                <Clock size={14} className="text-slate-700" /> {episode.duration || '24m'}
               </div>
               <div className="flex items-center gap-2">
-                 <div className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-cyan-500 shadow-[0_0_8px_#06b6d4]' : 'bg-slate-800 light:bg-slate-300'}`} />
-                 <span className={isCompleted ? 'text-cyan-400 light:text-cyan-600 font-bold' : 'text-slate-600'}>
+                 <div className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-cyan-500 shadow-[0_0_8px_#06b6d4]' : 'bg-slate-800'}`} />
+                 <span className={isCompleted ? 'text-cyan-400 font-bold' : 'text-slate-600'}>
                    {isCompleted ? 'CLEARED' : 'PENDING'}
                  </span>
               </div>
@@ -278,7 +270,6 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
         }
       `}</style>
 
-      {/* 3D Map Container */}
       <div 
         className="absolute w-full h-full flex items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
         style={{
@@ -290,7 +281,6 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
         <div className="relative transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
            {episodes.map((ep, i) => renderHexagonNode(ep, i))}
            
-           {/* Final Trophy Node Decor */}
            {episodes.length > 0 && (
              <div 
                className="absolute transition-all duration-1000"
@@ -300,28 +290,26 @@ const HexagonPath: React.FC<HexagonPathProps> = ({ episodes, activeId, lastWatch
                  transformStyle: 'preserve-3d'
                }}
              >
-                <div className="w-[100px] h-[86px] flex items-center justify-center glass rounded-full border border-dashed border-white/20 light:border-slate-300 animate-[spin_30s_linear_infinite]">
-                   <Trophy size={28} className="text-white light:text-slate-300" />
+                <div className="w-[100px] h-[86px] flex items-center justify-center glass rounded-full border border-dashed border-white/20 animate-[spin_30s_linear_infinite]">
+                   <Trophy size={28} className="text-white" />
                 </div>
              </div>
            )}
         </div>
       </div>
 
-      {/* UI Controls */}
       <div className="absolute top-6 right-6 xl:top-10 xl:right-10 flex flex-col gap-3 pointer-events-auto z-[200]">
          <button 
            onClick={(e) => { e.stopPropagation(); setIsCentered(!isCentered); }}
-           className={`p-3.5 rounded-2xl glass border transition-all hover:scale-105 active:scale-95 ${isCentered ? 'border-cyan-500/50 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-white/10 light:border-slate-200 text-slate-500 hover:text-white'}`}
+           className={`p-3.5 rounded-2xl glass border transition-all hover:scale-105 active:scale-95 ${isCentered ? 'border-cyan-500/50 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-white/10 text-slate-500 hover:text-white'}`}
            title="Toggle Neural Map Centering"
          >
            <Target size={22} className={isCentered ? 'animate-pulse' : ''} />
          </button>
       </div>
 
-      {/* Atmospheric Fog Visuals */}
-      <div className="absolute inset-x-0 top-0 h-48 xl:h-72 pointer-events-none bg-gradient-to-b from-[#0a0c12] light:from-white via-[#0a0c12]/70 light:via-white/70 to-transparent z-10" />
-      <div className="absolute inset-x-0 bottom-0 h-48 xl:h-72 pointer-events-none bg-gradient-to-t from-[#0a0c12] light:from-white via-[#0a0c12]/70 light:via-white/70 to-transparent z-10" />
+      <div className="absolute inset-x-0 top-0 h-48 xl:h-72 pointer-events-none bg-gradient-to-b from-[#0a0c12] via-[#0a0c12]/70 to-transparent z-10" />
+      <div className="absolute inset-x-0 bottom-0 h-48 xl:h-72 pointer-events-none bg-gradient-to-t from-[#0a0c12] via-[#0a0c12]/70 to-transparent z-10" />
     </div>
   );
 };
